@@ -1,0 +1,428 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Flask Assignemnt",
+    "description": "A secure and scalable RESTful API that allow user to create, delet, read,update and delete notes. share notes with other and seach based on keywords.",
+    "version": "1.0.11"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5000"
+    }
+  ],
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "summary": "User Signup",
+        "tags": [
+          "user"
+        ],
+        "requestBody": {
+          "description": "User signup details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSignup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "409": {
+            "description": "User already exists"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Generate Token (Login)",
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "description": "User login credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      }
+    },
+    "/api/notes": {
+      "get": {
+        "summary": "Get all notes",
+        "tags": [
+          "notes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "404": {
+            "description": "you have no notes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteList"
+                }
+              }
+            }
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      },
+      "post": {
+        "summary": "Create a new note",
+        "tags": [
+          "notes"
+        ],
+        "requestBody": {
+          "description": "Note details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note saved"
+          },
+          "400": {
+            "description": "No notes were sent, empty note"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      }
+    },
+    "/api/notes/{id}": {
+      "get": {
+        "summary": "Get note by ID",
+        "tags": [
+          "notes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the note",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      },
+      "put": {
+        "summary": "Update a note",
+        "tags": [
+          "notes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the note",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated note details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Note"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note updated successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Updated Notes": [
+                    {
+                      "id": 2,
+                      "user_id": 3,
+                      "note": "notes of universe"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Delete note if you want to update to empty note"
+          },
+          "404": {
+            "description": "You have no note present of this id to update"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      },
+      "delete": {
+        "summary": "Delete a note",
+        "tags": [
+          "notes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the note to delete",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note deleted successfully"
+          },
+          "404": {
+            "description": "note to delete of mentioned id not found"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      }
+    },
+    "/api/notes/{id}/share": {
+      "post": {
+        "summary": "Share a note",
+        "tags": [
+          "notes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the note you want to share.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notes shared successfully"
+          },
+          "400": {
+            "description": "- User to which you are sending notes does not exist\n- You are sharing notes with yourself, which you already have\n"
+          },
+          "404": {
+            "description": "you have no notes present to share\""
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "summary": "Search notes by keywords",
+        "tags": [
+          "notes"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Keywords for searching notes",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "user_id": 3,
+                    "note": "notes of universe"
+                  },
+                  {
+                    "id": 2,
+                    "user_id": 4,
+                    "note": "maths notes"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "You have no notes that have the word you mentioned"
+          }
+        },
+        "x-rate-limit": {
+          "description": "Rate limit for this endpoint",
+          "limit": 5,
+          "interval": "1 minute"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserSignup": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "NoteList": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "user_id": {
+                  "type": "integer"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWTAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "description": "Enter your JWT token in the format 'Bearer YOUR_JWT_TOKEN'"
+      }
+    }
+  },
+  "security": [
+    {
+      "JWTAuth": []
+    }
+  ]
+}
